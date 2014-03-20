@@ -1,6 +1,6 @@
-# sequelize-restful
+# sequelize-restful-associations
 
-A connect module that adds a restful API for all defined models to your application.
+A connect module based on a fork of sequelize-restful that adds a one level of associative capability to a restful API. It also lets you define which model should be exposed through this restful API.
 
 ## Usage
 
@@ -31,7 +31,13 @@ http.createServer(app).listen(app.get('port'), function(){
   // Description: Define the path to the restful API.
   // Default:     '/api'
 
-  endpoint: '/restful'
+  endpoint: '/restful',
+
+  // Parameter:   allowed
+  // Description: Define which models will be exposed through the restful API
+  // Default:     'new Array()' if it is an Empty array, all the models will be exposed by default
+
+  allowed: new Array('Model0', 'Model1', 'Model2')
 }
 ```
 
@@ -146,7 +152,7 @@ curl -d "title=hallo%20world" http://localhost:3000/api/Tags
 }
 ```
 
-### UPDATE /api/Tags/1
+### PUT /api/Tags/1
 
 Updating an already existing instance of a model
 
@@ -184,3 +190,56 @@ curl -i -X DELETE http://localhost:3000/admin/api/Tags/3
 }
 ```
 
+## The API for Associations
+
+### GET /api/Projects/1/Tags
+
+Returns all the instance of 'associated_dao_factory' associated to the instance 1 of 'dao_factory'
+
+```console
+curl -i -X GET http://localhost:3000/admin/api/Projects/1/Tags
+
+```
+
+```js
+{
+  "status": "success",
+  "data": {
+    "title": "foo",
+    "id": 1,
+    "createdAt": "2013-02-09T09:48:14.000Z",
+    "updatedAt": "2013-02-09T09:48:14.000Z",
+    "ProjectId": 1
+  }
+}
+```
+
+### DELETE /api/Photo/1/Photographer
+
+Deleting an existing association for 1:1 or N:1 association.
+
+```console
+curl -i -X DELETE http://localhost:3000/admin/api/Photo/1/Photographer
+```
+
+```js
+{
+  "status": "success",
+  "data": {}
+}
+```
+
+### DELETE /api/Projects/1/Tags/1
+
+Deleting an existing association between instances
+
+```console
+curl -i -X DELETE http://localhost:3000/admin/api/Projects/1/Tags/3
+```
+
+```js
+{
+  "status": "success",
+  "data": {}
+}
+```
